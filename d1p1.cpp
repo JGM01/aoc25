@@ -6,7 +6,7 @@
 int main() {
 
   // input file stream (also known as a ifstream)
-  std::ifstream ifstm("input1");
+  std::ifstream ifstm("id1p1");
 
   // check if the ifstream is working
   if (!ifstm.is_open()) {
@@ -26,6 +26,7 @@ int main() {
     // Check if the first character is R or L
     if (line[0] == 'R') {
       int delta = std::stoi(line.substr(1));
+
       dial_pos = (dial_pos + delta) % 100;
       result += (dial_pos == 0) ? 1 : 0;
     } else {
