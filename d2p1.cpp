@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <expected>
-#include <fstream>
+#include <string>
 
 enum class file_error {
   file_open,
@@ -13,14 +13,12 @@ enum class file_error {
 
 std::expected<std::string, file_error> f2str(std::string fileName) {
 
+  // open (duh)
   FILE *f = fopen(fileName.c_str(), "r");
-
   char *buf = NULL;
 
-  if (f == NULL) {
-    perror("Couldn't open file :(\n");
+  if (f == NULL)
     return std::unexpected(file_error::file_open);
-  }
 
   // Go to end of file
   fseek(f, 0L, SEEK_END);
@@ -28,11 +26,25 @@ std::expected<std::string, file_error> f2str(std::string fileName) {
   // Put pointer position into long (can be interpreted as the size of the file)
   long size = ftell(f);
 
+  if (size == -1)
+    return std::unexpected(file_error::file_size);
+
+  // allocate
   buf = (char *)malloc(sizeof(char) * size + 1);
 
+  if (buf == NULL)
+    return std::unexpected(file_error::allocation);
+
+  // put file pointer at beginning again
   rewind(f);
 
-  fread(buf, sizeof(char), size, f);
+  size_t bytesRead = fread(buf, sizeof(char), size, f);
+
+  if (bytesRead != size)
+    return std::unexpected(file_error::file_read);
+
+  // null terminate :D
+  buf[size] = '\0';
 
   return std::string(buf);
 }
