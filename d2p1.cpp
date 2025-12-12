@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <expected>
+#include <iostream>
 #include <string>
 
 enum class file_error {
@@ -51,8 +52,26 @@ std::expected<std::string, file_error> f2str(std::string fileName) {
 
 int main() {
 
-  std::string input = f2str("id2").value();
-  printf("%s\n", input.c_str());
+  auto input = f2str("id2");
+
+  if (input.has_value())
+    printf("%s\n", input.value().c_str());
+  else {
+    switch (input.error()) {
+    case file_error::file_open:
+      perror("File open error :(");
+      break;
+    case file_error::file_size:
+      perror("File size error :(");
+      break;
+    case file_error::allocation:
+      perror("Buffer allocation error :(");
+      break;
+    case file_error::file_read:
+      perror("File read error :(");
+      break;
+    }
+  }
 
   return EXIT_SUCCESS;
 }
