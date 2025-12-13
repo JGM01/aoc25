@@ -1,0 +1,73 @@
+#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <expected>
+#include <string>
+#include <vector>
+
+#include "utils.hpp"
+
+int maxJoltageInBank(std::string bank) {
+  std::array<int, 10> joltageMap;
+  joltageMap.fill(-1);
+
+  for (const char battery : bank) {
+    int currentJoltage = battery - '0';
+
+    for (int i = 0; i < joltageMap.size(); i++)
+      joltageMap[i] =
+          (joltageMap[i] != -1) ? std::max(joltageMap[i], currentJoltage) : -1;
+
+    joltageMap[currentJoltage] =
+        (joltageMap[currentJoltage] == -1)
+            ? 0
+            : std::max(currentJoltage, joltageMap[currentJoltage]);
+  }
+
+  for (int i = 9; i > 0; i--) {
+    if (joltageMap[i] > 0)
+      return (i * 10) + joltageMap[i];
+  }
+
+  return 0;
+}
+
+int totalOutputJoltage(std::string input) {
+  int totalJoltage = 0;
+
+  std::vector<std::string> batteryBanks = split(input, "\n");
+  for (const std::string bank : batteryBanks)
+    totalJoltage += maxJoltageInBank(bank);
+
+  return totalJoltage;
+}
+
+int main() {
+
+  auto input = f2str("inputs/id3");
+
+  if (input.has_value())
+    printf("%s\n", input.value().c_str());
+  else {
+    switch (input.error()) {
+    case file_error::file_open:
+      perror("File open error :(");
+      break;
+    case file_error::file_size:
+      perror("File size error :(");
+      break;
+    case file_error::allocation:
+      perror("Buffer allocation error :(");
+      break;
+    case file_error::file_read:
+      perror("File read error :(");
+      break;
+    }
+  }
+
+  printf("%d\n", totalOutputJoltage(input.value()));
+
+  return EXIT_SUCCESS;
+}

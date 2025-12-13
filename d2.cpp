@@ -52,25 +52,26 @@ long part2(std::string input) {
 
     // [500, 2000]
     std::vector<std::string> x = split(range, "-");
-    long a = std::stol(x[0]);
-    long b = std::stol(x[1]);
+    long num = std::stol(x[0]);
+    long end = std::stol(x[1]);
 
-    while (a <= b) {
-      std::string a_str = std::to_string(a);
+    while (num <= end) {
+      std::string numStr = std::to_string(num);
 
-      int windowSize = a_str.length() / 2;
+      int windowSize = numStr.length() / 2;
       bool foundInvalid = false;
+
       while (windowSize >= 1) {
         int l = 0;
-        std::string potentiallyRepeatableString = a_str.substr(l, windowSize);
-        while (l < a_str.length()) {
+        std::string potentiallyRepeatingString = numStr.substr(l, windowSize);
+        while (l < numStr.length()) {
           l += windowSize;
 
-          if (a_str.substr(l, windowSize) != potentiallyRepeatableString)
+          if (numStr.substr(l, windowSize) != potentiallyRepeatingString)
             break;
 
-          if (l + windowSize == a_str.length()) {
-            result += a;
+          if (l + windowSize == numStr.length()) {
+            result += num;
             foundInvalid = true;
             break;
           }
@@ -81,7 +82,7 @@ long part2(std::string input) {
 
         windowSize--;
       }
-      a++;
+      num++;
     }
   }
   return result;
