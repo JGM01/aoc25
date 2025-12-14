@@ -8,8 +8,18 @@
 #include <vector>
 
 #include "utils.hpp"
+//               v
+// 234234234234278
+//            l
+//              ^
+// 4444
+// remaining: 2
+// searching: 4
+//
 
-int maxJoltageInBank(std::string bank) {
+long maxJoltageInBankHigh(std::string bank) { return 0; }
+
+int maxJoltageInBankLow(std::string bank) {
   std::array<int, 10> joltageMap;
   joltageMap.fill(-1);
 
@@ -34,12 +44,19 @@ int maxJoltageInBank(std::string bank) {
   return 0;
 }
 
-int totalOutputJoltage(std::string input) {
+enum class joltageSetting { low, high };
+
+int totalOutputJoltage(std::string input, joltageSetting j) {
   int totalJoltage = 0;
 
   std::vector<std::string> batteryBanks = split(input, "\n");
-  for (const std::string bank : batteryBanks)
-    totalJoltage += maxJoltageInBank(bank);
+
+  if (j == joltageSetting::low)
+    for (const std::string bank : batteryBanks)
+      totalJoltage += maxJoltageInBankLow(bank);
+  else
+    for (const std::string bank : batteryBanks)
+      totalJoltage += maxJoltageInBankHigh(bank);
 
   return totalJoltage;
 }
@@ -67,7 +84,8 @@ int main() {
     }
   }
 
-  printf("%d\n", totalOutputJoltage(input.value()));
+  printf("%d\n", totalOutputJoltage(input.value(), joltageSetting::low));
+  printf("%dl\n", totalOutputJoltage(input.value(), joltageSetting::high));
 
   return EXIT_SUCCESS;
 }
